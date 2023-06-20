@@ -96,7 +96,7 @@ def main(M=5,N=10,T=500,charge_trigger=50,booking_type="random"):
                }
     return results
 
-def analysis(results):
+def analysis(results,figname):
     # unpack results
     dropin_blockages = results["dropin_blockages"]
     booking_blockages = results["booking_blockages"]
@@ -104,32 +104,41 @@ def analysis(results):
     stations = results["stations"]
     EVs = results["EVs"]
     waiting_times = results["waiting_times"]
-    # plot
-    plt.plot(np.sum(occupation,axis=0))
-    plt.title("Occupation")
-    plt.xlabel("Time")
-    plt.show()
-    ###
-    plt.plot(np.sum(dropin_blockages,axis=0))
-    plt.title("Drop-in blockages")
-    plt.xlabel("Time")
-    plt.show()
-    ###
-    plt.title("Booking blockages")
-    plt.plot(np.sum(booking_blockages,axis=0))
-    plt.xlabel("Time")
-    plt.show()
-    ###
-    # number of free stations
-    free_stations = np.sum(stations == 0,axis=0)
-    plt.plot(free_stations)
-    plt.title("Free stations")
-    plt.xlabel("Time")
-    plt.show()
-    ###
 
+    # Create subplots
+    fig, axs = plt.subplots(5, 1, figsize=(10, 16))
 
+    # Plot 1 - Occupation
+    axs[0].plot(np.sum(occupation, axis=0))
+    axs[0].set_ylabel("Occupation")
+    axs[0].set_xlabel("Time")
 
+    # Plot 2 - Drop-in blockages
+    axs[1].plot(np.sum(dropin_blockages, axis=0))
+    axs[1].set_ylabel("Drop-in blockages")
+    axs[1].set_xlabel("Time")
+
+    # Plot 3 - Booking blockages
+    axs[2].plot(np.sum(booking_blockages, axis=0))
+    axs[2].set_ylabel("Booking blockages")
+    axs[2].set_xlabel("Time")
+
+    # Plot 4 - Free stations
+    free_stations = np.sum(stations == 0, axis=0)
+    axs[3].plot(free_stations)
+    axs[3].set_ylabel("Free stations")
+    axs[3].set_xlabel("Time")
+
+    # Plot 5 - Total waiting times
+    total_waiting_times = [sum(ii) for ii in waiting_times]
+    axs[4].hist(total_waiting_times, bins=10)
+    axs[4].set_ylabel("waiting times per ev")
+
+    # Adjust spacing between subplots
+    plt.tight_layout()
+    # Show the figure
+    plt.savefig(f"{figname}.png")
+    plt.show()
     return 0
 
 
@@ -142,8 +151,8 @@ if __name__ == "__main__":
     T = 500
     charge_trigger = 50
     results = main(M,N,T,charge_trigger,"random")
-    analysis(results)
-    pass
+    analysis(results,"random")
+
 
 
 
