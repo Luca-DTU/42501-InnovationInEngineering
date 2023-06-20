@@ -72,16 +72,8 @@ def main(M=5,N=10,T=500,charge_trigger=50,booking_type="random"):
                 EVs[jj].charge()
             # Update history
             EVs[jj].update_history()
-            # print(EVs[jj].history)
-        # print(stations[:,t])
-    ### ANALYSIS ###
+    ### data extraction ###
     occupation = np.where(stations > 0.5, 1, 0)
-    plt.plot(np.sum(occupation,axis=0))
-    plt.show()
-    plt.plot(np.sum(dropin_blockages,axis=0))
-    plt.show()
-    plt.plot(np.sum(booking_blockages,axis=0))
-    plt.show()
     ### separate bookers and drop-ins to see waiting times
     total_waiting_times = 0
     for ii in range(N):
@@ -114,6 +106,12 @@ if __name__ == "__main__":
     T = 500
     charge_trigger = 50
     results = main(M,N,T,charge_trigger,"random")
+    # plt.plot(np.sum(occupation,axis=0))
+    # plt.show()
+    # plt.plot(np.sum(dropin_blockages,axis=0))
+    # plt.show()
+    # plt.plot(np.sum(booking_blockages,axis=0))
+    # plt.show()
 
             
 
