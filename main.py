@@ -75,7 +75,7 @@ def main(M=5,N=10,T=500,charge_trigger=50,booking_type="random"):
     ### data extraction ###
     occupation = np.where(stations > 0.5, 1, 0)
     ### separate bookers and drop-ins to see waiting times
-    total_waiting_times = 0
+    all_waiting_times = []
     for ii in range(N):
         diff  =  np.diff(dropin_blockages[ii])
         waiting_start = np.where(diff == 1)
@@ -86,9 +86,8 @@ def main(M=5,N=10,T=500,charge_trigger=50,booking_type="random"):
         else:
             waiting_times = waiting_end[0] - waiting_start[0] 
         # print(f"Average waiting time for vehicle {ii} is: ",np.mean(waiting_times))
-        total_waiting_times += np.mean(waiting_times)
-    total_waiting_times /= N
-    results = {"total_waiting_times":total_waiting_times,
+        all_waiting_times.append(list(waiting_times))
+    results = {"waiting_times":all_waiting_times,
                "dropin_blockages":dropin_blockages,
                "booking_blockages":booking_blockages,
                "occupation":occupation,
@@ -104,13 +103,33 @@ def analysis(results):
     occupation = results["occupation"]
     stations = results["stations"]
     EVs = results["EVs"]
+    waiting_times = results["waiting_times"]
     # plot
     plt.plot(np.sum(occupation,axis=0))
+    plt.title("Occupation")
+    plt.xlabel("Time")
     plt.show()
+    ###
     plt.plot(np.sum(dropin_blockages,axis=0))
+    plt.title("Drop-in blockages")
+    plt.xlabel("Time")
     plt.show()
+    ###
+    plt.title("Booking blockages")
     plt.plot(np.sum(booking_blockages,axis=0))
+    plt.xlabel("Time")
     plt.show()
+    ###
+    # number of free stations
+    free_stations = np.sum(stations == 0,axis=0)
+    plt.plot(free_stations)
+    plt.title("Free stations")
+    plt.xlabel("Time")
+    plt.show()
+    ###
+
+
+
     return 0
 
 
