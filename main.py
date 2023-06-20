@@ -85,7 +85,7 @@ def main(M=5,N=10,T=500,charge_trigger=50,booking_type="random"):
             waiting_times = waiting_end[0] - waiting_start[0][:-unended_wait] # last start has no end
         else:
             waiting_times = waiting_end[0] - waiting_start[0] 
-        print(f"Average waiting time for vehicle {ii} is: ",np.mean(waiting_times))
+        # print(f"Average waiting time for vehicle {ii} is: ",np.mean(waiting_times))
         total_waiting_times += np.mean(waiting_times)
     total_waiting_times /= N
     results = {"total_waiting_times":total_waiting_times,
@@ -97,6 +97,23 @@ def main(M=5,N=10,T=500,charge_trigger=50,booking_type="random"):
                }
     return results
 
+def analysis(results):
+    # unpack results
+    dropin_blockages = results["dropin_blockages"]
+    booking_blockages = results["booking_blockages"]
+    occupation = results["occupation"]
+    stations = results["stations"]
+    EVs = results["EVs"]
+    # plot
+    plt.plot(np.sum(occupation,axis=0))
+    plt.show()
+    plt.plot(np.sum(dropin_blockages,axis=0))
+    plt.show()
+    plt.plot(np.sum(booking_blockages,axis=0))
+    plt.show()
+    return 0
+
+
 if __name__ == "__main__":
     # Number of EVs
     N = 10
@@ -106,12 +123,10 @@ if __name__ == "__main__":
     T = 500
     charge_trigger = 50
     results = main(M,N,T,charge_trigger,"random")
-    # plt.plot(np.sum(occupation,axis=0))
-    # plt.show()
-    # plt.plot(np.sum(dropin_blockages,axis=0))
-    # plt.show()
-    # plt.plot(np.sum(booking_blockages,axis=0))
-    # plt.show()
+    analysis(results)
+    pass
+
+
 
             
 
