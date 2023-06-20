@@ -106,36 +106,34 @@ def analysis(results,figname):
     waiting_times = results["waiting_times"]
 
     # Create subplots
-    fig, axs = plt.subplots(5, 1, figsize=(10, 16))
-
+    fig, axs = plt.subplots(5, 1, figsize=(10, 10))
     # Plot 1 - Occupation
-    axs[0].plot(np.sum(occupation, axis=0))
+    axs[0].plot(np.mean(occupation, axis=0))
     axs[0].set_ylabel("Occupation")
     axs[0].set_xlabel("Time")
-
     # Plot 2 - Drop-in blockages
-    axs[1].plot(np.sum(dropin_blockages, axis=0))
+    axs[1].plot(np.mean(dropin_blockages, axis=0))
     axs[1].set_ylabel("Drop-in blockages")
     axs[1].set_xlabel("Time")
-
     # Plot 3 - Booking blockages
-    axs[2].plot(np.sum(booking_blockages, axis=0))
+    axs[2].plot(np.mean(booking_blockages, axis=0))
     axs[2].set_ylabel("Booking blockages")
     axs[2].set_xlabel("Time")
-
     # Plot 4 - Free stations
-    free_stations = np.sum(stations == 0, axis=0)
+    free_stations = np.mean(stations == 0, axis=0)
     axs[3].plot(free_stations)
     axs[3].set_ylabel("Free stations")
     axs[3].set_xlabel("Time")
-
     # Plot 5 - Total waiting times
     total_waiting_times = [sum(ii) for ii in waiting_times]
-    axs[4].hist(total_waiting_times, bins=10)
+    total_waiting_times = np.clip(total_waiting_times,-1,T)
+    axs[4].set_xlim(0,T)
+    axs[4].hist(total_waiting_times, bins=20)
     axs[4].set_ylabel("waiting times per ev")
-
+    # set x limit for axs[4]
     # Adjust spacing between subplots
-    plt.tight_layout()
+    fig.suptitle(f"{figname} - N = {N}, M = {M}, T = {T}")
+    # plt.tight_layout()
     # Show the figure
     plt.savefig(f"{figname}.png")
     plt.show()
@@ -144,12 +142,19 @@ def analysis(results,figname):
 
 if __name__ == "__main__":
     # Number of EVs
-    N = 10
+    N = 1000
     # Number of charging stations
-    M = 5
+    M = 500
     # Time horizon
-    T = 500
-    charge_trigger = 50
+    T = 1000
+    charge_trigger = 20
+
+    results = main(M,N,T,charge_trigger,"dropins")
+    analysis(results,"dropins")
+
+    results = main(M,N,T,charge_trigger,"bookers")
+    analysis(results,"bookers")
+
     results = main(M,N,T,charge_trigger,"random")
     analysis(results,"random")
 
